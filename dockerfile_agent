@@ -1,0 +1,20 @@
+FROM python:3.7-slim-stretch
+
+EXPOSE 4242
+
+ENV DEBIAN_FRONTEND noninteractive
+ENV PYTHONPATH "${PYTHONPATH}:/mn-agent"
+ENV DPA_LAUNCHING_ENV "docker"
+
+COPY requirements.txt /
+
+RUN apt-get update -y --fix-missing && \
+    apt-get install -y -q \
+        build-essential \
+        openssl \
+        git \
+        libssl-dev \
+        libffi-dev && \
+    echo "stty iutf8" >> ~/.bashrc && \
+    pip install -r requirements.txt && \
+    rm -rf /var/lib/apt/lists/*

@@ -1,0 +1,4 @@
+include requirements.txt
+include mn_agent/http_api/templates/*.html
+include mn_agent/log_config.yml
+include mn_agent/channels/telegram/config/*.yml
