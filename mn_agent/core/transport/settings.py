@@ -1,6 +1,6 @@
 TRANSPORT_SETTINGS = {
-    'agent_namespace': 'deeppavlov_agent',
-    'agent_name': 'dp_agent',
+    'agent_namespace': 'mn_agent',
+    'agent_name': 'mn_agent',
     'utterance_lifetime_sec': 120,
     'channels': {},
     'transport': {

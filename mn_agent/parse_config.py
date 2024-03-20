@@ -107,7 +107,7 @@ class PipelineConfigParser:
             if len(params) == 1:
                 if params[0] in built_in_connectors:
                     connector_class = built_in_connectors[params[0]]
-                    module_provided_str = 'in deeppavlov_agent built in connectors'
+                    module_provided_str = 'in mn_agent built in connectors'
                 elif self.connectors_module:
                     connector_class = getattr(self.connectors_module, params[0], None)
                     module_provided_str = f'in {self.connectors_module.__name__} connectors module'

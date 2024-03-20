@@ -65,5 +65,5 @@ async def init_app(agent, session, consumers, logger_stats, output_formatter,
 
     app.on_startup.append(on_startup)
     app.on_shutdown.append(on_shutdown)
-    aiohttp_jinja2.setup(app, loader=jinja2.PackageLoader('deeppavlov_agent.http_api', 'templates'))
+    aiohttp_jinja2.setup(app, loader=jinja2.PackageLoader('mn_agent.http_api', 'templates'))
     return app

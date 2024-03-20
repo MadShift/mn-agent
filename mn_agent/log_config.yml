@@ -14,7 +14,7 @@ handlers:
     class: 'logging.FileHandler'
     level: 'DEBUG'
     formatter: 'default'
-    filename: '~/dp_agent.log'
+    filename: '~/mn_agent.log'
   stdout:
     class: 'logging.StreamHandler'
     level: 'DEBUG'
