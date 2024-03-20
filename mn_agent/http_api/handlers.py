@@ -8,6 +8,10 @@ import aiohttp
 import aiohttp_jinja2
 from aiohttp import web
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 async def handle_command(payload, user_id, state_manager):
     if payload in {'/start', '/close'} and state_manager:
@@ -61,6 +65,9 @@ class ApiHandler:
     async def dialog(self, request):
         state_manager = request.app['agent'].state_manager
         dialog_id = request.match_info['dialog_id']
+
+        logger.info(dialog_id)
+
         if all(c in hexdigits for c in dialog_id):
             if len(dialog_id) == 24:
                 dialog_obj = await state_manager.get_dialog_by_id(dialog_id)
