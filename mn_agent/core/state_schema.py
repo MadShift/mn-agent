@@ -13,6 +13,8 @@ import json
 
 from . import STATE_API_VERSION
 
+logger = logging.getLogger(__name__)
+
 USER_PROFILE = {
     "name": None,
     "gender": None,
@@ -352,6 +354,9 @@ class Dialog:
             raise ValueError('You should provide either external_id or human object')
         result = {}
         async for document in db[cls.collection_name].find({'_human_id': human._id}):
+
+            logger.info(document)
+            
             result[str(document['dialog_id'])] = str(document['utterances'][0]['text'])
         return result
 
