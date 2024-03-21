@@ -353,7 +353,6 @@ class Dialog:
         result = []
         async for document in db[cls.collection_name].find({'_human_id': human._id}):
             result.append(str(document['dialog_id']))
-            await result
         return result
 
     @classmethod
