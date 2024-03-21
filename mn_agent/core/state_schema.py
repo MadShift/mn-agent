@@ -350,9 +350,9 @@ class Dialog:
             human = await Human.get_or_create(db, external_id)
         if not human:
             raise ValueError('You should provide either external_id or human object')
-        result = []
+        result = {}
         async for document in db[cls.collection_name].find({'_human_id': human._id}):
-            result.append(str(document['dialog_id']))
+            result[str(document['dialog_id'])] = str(document['utterances'][0]['text'])
         return result
 
     @classmethod
