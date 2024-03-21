@@ -68,11 +68,17 @@ class ApiHandler:
 
         logger.info(dialog_id)
 
+        if len(dialog_id) == 5:
+            dialog_obj = await state_manager.get_dialog_by_user_id(dialog_id)
+
+            if not dialog_obj:
+                raise web.HTTPNotFound(reason=f'dialogs with user id {dialog_id} does not exist')
+
+            return web.json_response(dialog_obj.to_dict())
+
         if all(c in hexdigits for c in dialog_id):
             if len(dialog_id) == 24:
                 dialog_obj = await state_manager.get_dialog_by_id(dialog_id)
-            elif len(dialog_id) == 5:
-                dialog_obj = await state_manager.get_dialog_by_user_id(dialog_id)
             else:
                 dialog_obj = await state_manager.get_dialog_by_dialog_id(dialog_id)
 
