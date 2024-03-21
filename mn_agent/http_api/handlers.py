@@ -74,7 +74,7 @@ class ApiHandler:
             if not dialog_obj:
                 raise web.HTTPNotFound(reason=f'dialogs with user id {dialog_id} does not exist')
 
-            return web.json_response({"dialog_ids": dialog_id})
+            return web.json_response({"dialog_ids": dialog_obj})
 
         if all(c in hexdigits for c in dialog_id):
             if len(dialog_id) == 24:
