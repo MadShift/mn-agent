@@ -354,10 +354,13 @@ class Dialog:
             raise ValueError('You should provide either external_id or human object')
         result = {}
         async for document in db[cls.collection_name].find({'_human_id': human._id}):
-
+            dialog = await db[cls.collection_name].find_one({'dialog_id': str(document['dialog_id'])})
+            dialog_obj = cls(actual=True, human=human, **dialog)
             logger.info(document)
-            
-            result[str(document['dialog_id'])] = str(document['utterances'][0]['text'])
+            logger.info(dialog_obj)
+
+            #result[str(document['dialog_id'])] = str(document['utterances'][0]['text'])
+            result[str(document['dialog_id'])] = str(document['dialog_id'])
         return result
 
     @classmethod
