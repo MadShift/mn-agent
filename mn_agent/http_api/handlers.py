@@ -66,8 +66,7 @@ class ApiHandler:
         state_manager = request.app['agent'].state_manager
         dialog_id = request.match_info['dialog_id']
 
-        logger.info(dialog_id)
-
+        # Отработка истории диалогов с айди пользователя
         if len(dialog_id) == 5:
             dialog_obj = await state_manager.get_dialog_by_user_id(dialog_id)
 
@@ -140,6 +139,24 @@ class ApiHandler:
         rating = data.pop('rating')
         utt_id = data.pop('utt_id')
         await state_manager.set_rating_utterance(user_id, utt_id, rating)
+        return web.Response()
+    
+    async def fav_get(self, request):
+        state_manager = request.app['agent'].state_manager
+        user_external_id = request.match_info['user_external_id']
+        result = await state_manager.get_fav_dialogs(user_external_id)
+        if not result:
+            raise web.HTTPNotFound(reason=f'favorite messages with user id {user_external_id} does not exist')
+        return web.json_response(result)
+    
+    async def fav_post(self, request):
+        state_manager = request.app['agent'].state_manager
+        data = await request.json()
+        user_external_id = request.match_info['user_external_id']
+        dialog_id = data.pop('dialog_id')
+        text = data.pop('text')
+        date = data.pop('date')
+        await state_manager.post_fav_dialogs(user_external_id, dialog_id, text, date)
         return web.Response()
 
     async def options(self, request):

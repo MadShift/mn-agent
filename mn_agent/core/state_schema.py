@@ -356,15 +356,9 @@ class Dialog:
         async for document in db[cls.collection_name].find({'_human_id': human._id}):
             dialog = await db[cls.collection_name].find_one({'dialog_id': str(document['dialog_id'])})
             dialog_obj = cls(actual=True, human=human, **dialog)
-            # logger.info(document)
             await dialog_obj.load_external_info(db)
-            # logger.info(dialog_obj)
             d_dict = dialog_obj.to_dict()
-            # logger.info(d_dict)
-
-
-            #result[str(document['dialog_id'])] = str(document['utterances'][0]['text'])
-            result[str(document['dialog_id'])] = str(d_dict['utterances'][0]['text'])
+            result["data"].append({"dialog_id": str(document['dialog_id']), "text": str(d_dict['utterances'][0]['text']), "date": str(document['date_start'])})
         return result
 
     @classmethod

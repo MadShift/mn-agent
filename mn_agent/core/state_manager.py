@@ -6,6 +6,9 @@ from datetime import datetime
 from .state_schema import Bot, BotUtterance, Dialog, Human, HumanUtterance
 import logging
 
+import sqlite3 as sql
+import os
+
 
 class StateManager:
     def __init__(self, db):
@@ -119,6 +122,7 @@ class StateManager:
     async def get_dialog_by_dialog_id(self, dialog_id):
         return await Dialog.get_by_dialog_id(self._db, dialog_id, full=True)
     
+    # Диалоги по uid
     async def get_dialog_by_user_id(self, dialog_id):
         return await Dialog.get_by_user_id(self._db, dialog_id)
 
@@ -162,6 +166,41 @@ class StateManager:
             {'rating': rating, 'user_external_id': user_external_id, 'datetime': datetime.now()}
         )
         await utt.save(self._db, force_encode_date=False)
+
+    async def get_fav_dialogs(self, user_external_id, dialog_id, text, date):
+        if not os.path.isfile("fav.db"):
+            self.create_sql_db
+        data = {}
+        con = sql.connect("fav.db")
+        cur = con.cursor()
+        res = cur.execute(f"SELECT dialog_id, text, date FROM fav WHERE uid = {user_external_id}").fetchall()
+        if not res:
+            return False
+        for i in res:
+            data["data"].append({"dialog_id": i[0], "text": i[1], "date": i[2]})
+        return data
+    
+    async def post_fav_dialogs(self, user_external_id, dialog_id, text, date):
+        if not os.path.isfile("fav.db"):
+            self.create_sql_db
+        con = sql.connect("fav.db")
+        cur = con.cursor()
+        res = cur.execute(f"SELECT * FROM fav WHERE uid = {user_external_id} and dialog_id = {dialog_id}").fetchone()
+        if not res:
+            cur.execute("INSERT INTO fav VALUES (?, ?, ?, ?)", (user_external_id, dialog_id, text, date))
+            con.commit()
+        if res:
+            if text == res[2]:
+                cur.execute(f"DELETE FROM fav WHERE uid = {user_external_id} and dialog_id = {dialog_id}")
+                con.commit()
+            else:
+                cur.execute(f"UPDATE fav SET text = {text} WHERE uid = {user_external_id} and dialog_id = {dialog_id}")
+                con.commit()
+
+    async def create_sql_db(self):
+        con = sql.connect("fav.db")
+        cur = con.cursor()
+        cur.execute("CREATE TABLE fav(uid, dialog_id, text, date)")
 
     async def drop_and_rate_active_dialog(self, user_external_id, rating):
         user = await Human.get_or_create(self._db, user_external_id)
