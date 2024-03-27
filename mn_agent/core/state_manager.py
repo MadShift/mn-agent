@@ -167,12 +167,12 @@ class StateManager:
         )
         await utt.save(self._db, force_encode_date=False)
 
-    async def get_fav_dialogs(self, user_external_id, dialog_id, text, date):
-        if not os.path.isfile("fav.db"):
-            self.create_sql_db
-        data = {"data": []}
+    async def get_fav_dialogs(self, user_external_id):
         con = sql.connect("fav.db")
         cur = con.cursor()
+        if "fav" not in cur.execute("SELECT name FROM sqlite_master").fetchone():
+            self.create_sql_db
+        data = {"data": []}
         res = cur.execute(f"SELECT dialog_id, text, date FROM fav WHERE uid = {user_external_id}").fetchall()
         if not res:
             return False
@@ -181,10 +181,10 @@ class StateManager:
         return data
     
     async def post_fav_dialogs(self, user_external_id, dialog_id, text, date):
-        if not os.path.isfile("fav.db"):
-            self.create_sql_db
         con = sql.connect("fav.db")
         cur = con.cursor()
+        if "fav" not in cur.execute("SELECT name FROM sqlite_master").fetchone():
+            self.create_sql_db
         res = cur.execute(f"SELECT * FROM fav WHERE uid = {user_external_id} and dialog_id = {dialog_id}").fetchone()
         if not res:
             cur.execute("INSERT INTO fav VALUES (?, ?, ?, ?)", (user_external_id, dialog_id, text, date))
@@ -200,7 +200,7 @@ class StateManager:
     async def create_sql_db(self):
         con = sql.connect("fav.db")
         cur = con.cursor()
-        cur.execute("CREATE TABLE fav(uid, dialog_id, text, date)")
+        cur.execute("CREATE TABLE fav (uid, dialog_id, text, date)")
 
     async def drop_and_rate_active_dialog(self, user_external_id, rating):
         user = await Human.get_or_create(self._db, user_external_id)
