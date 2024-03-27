@@ -173,7 +173,7 @@ class StateManager:
         if not cur.execute("SELECT name FROM sqlite_master").fetchone():
             cur.execute("CREATE TABLE fav (uid, dialog_id, text, date)")
         data = {"data": []}
-        res = cur.execute("SELECT dialog_id, text, date FROM fav WHERE uid = ?", (user_external_id)).fetchall()
+        res = cur.execute("SELECT dialog_id, text, date FROM fav WHERE uid = ?", (user_external_id,)).fetchall()
         con.close()
         if not res:
             return False
