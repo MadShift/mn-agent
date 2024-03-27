@@ -171,7 +171,7 @@ class StateManager:
         con = sql.connect("fav.db")
         cur = con.cursor()
         if not cur.execute("SELECT name FROM sqlite_master").fetchone():
-            self.create_sql_db
+            cur.execute("CREATE TABLE fav (uid, dialog_id, text, date)")
         data = {"data": []}
         res = cur.execute(f"SELECT dialog_id, text, date FROM fav WHERE uid = {user_external_id}").fetchall()
         con.close()
@@ -185,7 +185,7 @@ class StateManager:
         con = sql.connect("fav.db")
         cur = con.cursor()
         if not cur.execute("SELECT name FROM sqlite_master").fetchone():
-            self.create_sql_db
+            cur.execute("CREATE TABLE fav (uid, dialog_id, text, date)")
         res = cur.execute(f"SELECT * FROM fav WHERE uid = {user_external_id} and dialog_id = {dialog_id}").fetchone()
         if not res:
             cur.execute("INSERT INTO fav VALUES (?, ?, ?, ?)", (user_external_id, dialog_id, text, date))
@@ -197,12 +197,6 @@ class StateManager:
             else:
                 cur.execute(f"UPDATE fav SET text = {text} WHERE uid = {user_external_id} and dialog_id = {dialog_id}")
                 con.commit()
-        con.close()
-
-    async def create_sql_db(self):
-        con = sql.connect("fav.db")
-        cur = con.cursor()
-        cur.execute("CREATE TABLE fav (uid, dialog_id, text, date)")
         con.close()
 
     async def drop_and_rate_active_dialog(self, user_external_id, rating):
