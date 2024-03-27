@@ -173,7 +173,7 @@ class StateManager:
         if not cur.execute("SELECT name FROM sqlite_master").fetchone():
             cur.execute("CREATE TABLE fav (uid, dialog_id, text, date)")
         data = {"data": []}
-        res = cur.execute(f"SELECT dialog_id, text, date FROM fav WHERE uid = {user_external_id}").fetchall()
+        res = cur.execute("SELECT dialog_id, text, date FROM fav WHERE uid = ?", (user_external_id)).fetchall()
         con.close()
         if not res:
             return False
@@ -186,16 +186,16 @@ class StateManager:
         cur = con.cursor()
         if not cur.execute("SELECT name FROM sqlite_master").fetchone():
             cur.execute("CREATE TABLE fav (uid, dialog_id, text, date)")
-        res = cur.execute(f"SELECT * FROM fav WHERE uid = {user_external_id} and dialog_id = {dialog_id}").fetchone()
+        res = cur.execute("SELECT * FROM fav WHERE uid = ? and dialog_id = ?", (user_external_id, dialog_id)).fetchone()
         if not res:
             cur.execute("INSERT INTO fav VALUES (?, ?, ?, ?)", (user_external_id, dialog_id, text, date))
             con.commit()
         if res:
             if text == res[2]:
-                cur.execute(f"DELETE FROM fav WHERE uid = {user_external_id} and dialog_id = {dialog_id}")
+                cur.execute("DELETE FROM fav WHERE uid = ? and dialog_id = ?", (user_external_id, dialog_id))
                 con.commit()
             else:
-                cur.execute(f"UPDATE fav SET text = {text} WHERE uid = {user_external_id} and dialog_id = {dialog_id}")
+                cur.execute("UPDATE fav SET text = ? WHERE uid = ? and dialog_id = ?", (text, user_external_id, dialog_id))
                 con.commit()
         con.close()
 
