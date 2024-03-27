@@ -174,6 +174,7 @@ class StateManager:
             self.create_sql_db
         data = {"data": []}
         res = cur.execute(f"SELECT dialog_id, text, date FROM fav WHERE uid = {user_external_id}").fetchall()
+        con.close()
         if not res:
             return False
         for i in res:
@@ -196,11 +197,13 @@ class StateManager:
             else:
                 cur.execute(f"UPDATE fav SET text = {text} WHERE uid = {user_external_id} and dialog_id = {dialog_id}")
                 con.commit()
+        con.close()
 
     async def create_sql_db(self):
         con = sql.connect("fav.db")
         cur = con.cursor()
         cur.execute("CREATE TABLE fav (uid, dialog_id, text, date)")
+        con.close()
 
     async def drop_and_rate_active_dialog(self, user_external_id, rating):
         user = await Human.get_or_create(self._db, user_external_id)
