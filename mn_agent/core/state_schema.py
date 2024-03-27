@@ -352,7 +352,7 @@ class Dialog:
             human = await Human.get_or_create(db, external_id)
         if not human:
             raise ValueError('You should provide either external_id or human object')
-        result = {}
+        result = {"data": []}
         async for document in db[cls.collection_name].find({'_human_id': human._id}):
             dialog = await db[cls.collection_name].find_one({'dialog_id': str(document['dialog_id'])})
             dialog_obj = cls(actual=True, human=human, **dialog)

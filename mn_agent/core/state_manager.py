@@ -170,7 +170,7 @@ class StateManager:
     async def get_fav_dialogs(self, user_external_id, dialog_id, text, date):
         if not os.path.isfile("fav.db"):
             self.create_sql_db
-        data = {}
+        data = {"data": []}
         con = sql.connect("fav.db")
         cur = con.cursor()
         res = cur.execute(f"SELECT dialog_id, text, date FROM fav WHERE uid = {user_external_id}").fetchall()
