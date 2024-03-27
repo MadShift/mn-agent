@@ -170,7 +170,7 @@ class StateManager:
     async def get_fav_dialogs(self, user_external_id):
         con = sql.connect("fav.db")
         cur = con.cursor()
-        if "fav" not in cur.execute("SELECT name FROM sqlite_master").fetchone():
+        if not cur.execute("SELECT name FROM sqlite_master").fetchone():
             self.create_sql_db
         data = {"data": []}
         res = cur.execute(f"SELECT dialog_id, text, date FROM fav WHERE uid = {user_external_id}").fetchall()
@@ -183,7 +183,7 @@ class StateManager:
     async def post_fav_dialogs(self, user_external_id, dialog_id, text, date):
         con = sql.connect("fav.db")
         cur = con.cursor()
-        if "fav" not in cur.execute("SELECT name FROM sqlite_master").fetchone():
+        if not cur.execute("SELECT name FROM sqlite_master").fetchone():
             self.create_sql_db
         res = cur.execute(f"SELECT * FROM fav WHERE uid = {user_external_id} and dialog_id = {dialog_id}").fetchone()
         if not res:
