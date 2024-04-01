@@ -375,9 +375,9 @@ class Dialog:
             dialog_obj = cls(actual=True, human=human, **dialog)
             await dialog_obj.load_external_info(db)
             d_dict = dialog_obj.to_dict()
-            for i in d_dict['utterances']:
-                if re.findall(find_text, i["text"]):
-                    result["data"].append({"dialog_id": str(document['dialog_id']), "text": str(d_dict['utterances'][0]['text']), "date": str(document['date_start']), "find_text": str(i["text"])})
+            for num, i in d_dict['utterances']:
+                if re.findall(find_text, i["text"], flags=re.I):
+                    result["data"].append({"dialog_id": str(document['dialog_id']), "text": str(d_dict['utterances'][0]['text']), "date": str(document['date_start']), "find_text": str(i["text"]), "index": num})
         return result
 
     @classmethod
