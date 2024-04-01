@@ -11,6 +11,8 @@ from bson.objectid import ObjectId
 import bson.json_util
 import json
 
+import re
+
 from . import STATE_API_VERSION
 
 logger = logging.getLogger(__name__)
@@ -359,6 +361,23 @@ class Dialog:
             await dialog_obj.load_external_info(db)
             d_dict = dialog_obj.to_dict()
             result["data"].append({"dialog_id": str(document['dialog_id']), "text": str(d_dict['utterances'][0]['text']), "date": str(document['date_start'])})
+        return result
+    
+    @classmethod
+    async def search_history(cls, db, external_id=None, find_text=None, human=None): # История с поиском по монго регуляркам
+        if external_id:
+            human = await Human.get_or_create(db, external_id)
+        if not human:
+            raise ValueError('You should provide either external_id or human object')
+        result = {"data": []}
+        async for document in db[cls.collection_name].find({'_human_id': human._id}):
+            dialog = await db[cls.collection_name].find_one({'dialog_id': str(document['dialog_id'])})
+            dialog_obj = cls(actual=True, human=human, **dialog)
+            await dialog_obj.load_external_info(db)
+            d_dict = dialog_obj.to_dict()
+            for i in d_dict['utterances']:
+                if re.findall(find_text, i["text"]):
+                    result["data"].append({"dialog_id": str(document['dialog_id']), "text": str(d_dict['utterances'][0]['text']), "date": str(document['date_start']), "find_text": str(i["text"])})
         return result
 
     @classmethod

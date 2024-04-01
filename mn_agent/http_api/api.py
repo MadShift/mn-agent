@@ -66,6 +66,8 @@ async def init_app(agent, session, consumers, logger_stats, output_formatter,
     app.router.add_get('/fav/{user_external_id}', handler.fav_get)
     app.router.add_post('/fav/{user_external_id}', handler.fav_post)
 
+    app.router.add_post('/story/{uid}', handler.story_search)
+
     app.on_startup.append(on_startup)
     app.on_shutdown.append(on_shutdown)
     aiohttp_jinja2.setup(app, loader=jinja2.PackageLoader('mn_agent.http_api', 'templates'))

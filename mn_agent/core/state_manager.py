@@ -125,6 +125,10 @@ class StateManager:
     # Диалоги по uid
     async def get_dialog_by_user_id(self, dialog_id):
         return await Dialog.get_by_user_id(self._db, dialog_id)
+    
+    # Поиск по истории диалога
+    async def get_dialog_by_story(self, dialog_id, find_text):
+        return await Dialog.search_history(self._db, dialog_id, find_text)
 
     async def list_dialog_ids(self, *args, **kwargs):
         return await Dialog.list_ids(self._db, *args, **kwargs)

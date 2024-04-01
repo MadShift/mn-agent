@@ -158,6 +158,20 @@ class ApiHandler:
         date = data.pop('date')
         await state_manager.post_fav_dialogs(user_external_id, dialog_id, text, date)
         return web.Response()
+    
+    async def story_search(self, request):
+        state_manager = request.app['agent'].state_manager
+        data = await request.json()
+        uid = request.match_info['uid']
+
+        find_text = data.pop('find_text')
+
+        dialog_obj = await state_manager.get_dialog_by_story(uid, find_text)
+
+        if not dialog_obj:
+                raise web.HTTPNotFound(reason=f'dialogs with user id {uid} does not exist')
+
+        return web.json_response(dialog_obj)
 
     async def options(self, request):
         return web.Response(headers={'Access-Control-Allow-Methods': 'POST, OPTIONS'})
