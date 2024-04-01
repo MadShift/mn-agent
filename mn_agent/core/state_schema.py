@@ -376,11 +376,11 @@ class Dialog:
             await dialog_obj.load_external_info(db)
             d_dict = dialog_obj.to_dict()
             for num, i in enumerate(d_dict['utterances']):
-                reg_search = re.search(find_text, i["text"], flags=re.I)
-                if reg_search:
+                if re.search(find_text, i["text"], flags=re.I):
                     finded_text = re.sub(r"<.*?>", "", i["text"])
                     finded_text = re.sub(find_text, f"<u>{find_text}</u>", finded_text, flags=re.I)
                     finded_text = re.sub(r"\s+", " ", finded_text)
+                    reg_search = re.search(find_text, i["text"], flags=re.I)
                     if reg_search.start() < 20 and (len(finded_text) - reg_search.end()) > 20:
                         finded_text = finded_text[:reg_search.end()+20]
                     elif reg_search.start() > 20 and (len(finded_text) - reg_search.end()) < 20:
