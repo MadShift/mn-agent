@@ -376,7 +376,15 @@ class Dialog:
             await dialog_obj.load_external_info(db)
             d_dict = dialog_obj.to_dict()
             for num, i in enumerate(d_dict['utterances']):
-                if re.findall(find_text, i["text"], flags=re.I):
+                reg_search = re.search(find_text, i["text"], flags=re.I)
+                if reg_search:
+                    finded_text = re.sub(find_text, f"<u>{find_text}</u>", i["text"], flags=re.I)
+                    if reg_search.start() < 13 and (len(finded_text) - reg_search.end()) > 14:
+                        finded_text = finded_text[:reg_search.end()+14]
+                    elif reg_search.start() > 13 and (len(finded_text) - reg_search.end()) < 14:
+                        finded_text = finded_text[reg_search.start()-13:]
+                    elif reg_search.start() > 13 and (len(finded_text) - reg_search.end()) > 14:
+                        finded_text = finded_text[reg_search.start()-13:reg_search.end()+14]
                     result["data"].append({"dialog_id": str(document['dialog_id']), "text": str(d_dict['utterances'][0]['text']), "date": str(document['date_start']), "find_text": str(i["text"]), "index": num})
         return result
 
