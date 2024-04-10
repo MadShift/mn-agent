@@ -157,7 +157,7 @@ class ApiHandler:
         text = data.pop('text')
         date = data.pop('date')
         await state_manager.post_fav_dialogs(user_external_id, dialog_id, text, date)
-        return self.fav_get(self, request)
+        return self.fav_get(request)
     
     async def story_search(self, request):
         state_manager = request.app['agent'].state_manager
