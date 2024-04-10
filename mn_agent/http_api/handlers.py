@@ -157,7 +157,10 @@ class ApiHandler:
         text = data.pop('text')
         date = data.pop('date')
         await state_manager.post_fav_dialogs(user_external_id, dialog_id, text, date)
-        return self.fav_get(request)
+        result = await state_manager.get_fav_dialogs(user_external_id)
+        if not result:
+            raise web.HTTPNotFound(reason=f'favorite messages with user id {user_external_id} does not exist')
+        return web.json_response(result)
     
     async def story_search(self, request):
         state_manager = request.app['agent'].state_manager
