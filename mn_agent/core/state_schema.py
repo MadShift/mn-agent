@@ -380,14 +380,20 @@ class Dialog:
                     finded_text = re.sub(r"<.*?>", "", i["text"])
                     finded_text = re.sub(find_text, f"<u>{find_text}</u>", finded_text, flags=re.I)
                     finded_text = re.sub(r"\s+", " ", finded_text)
-                    reg_search = re.search(find_text, finded_text, flags=re.I)
-                    if reg_search.start() < 20 and (len(finded_text) - reg_search.end()) > 20:
-                        finded_text = finded_text[:reg_search.end()+20]
-                    elif reg_search.start() > 20 and (len(finded_text) - reg_search.end()) < 20:
-                        finded_text = finded_text[reg_search.start()-20:]
-                    elif reg_search.start() > 20 and (len(finded_text) - reg_search.end()) > 20:
-                        finded_text = finded_text[reg_search.start()-20:reg_search.end()+20]
+                    # reg_search = re.search(find_text, finded_text, flags=re.I)
+                    # if reg_search.start() < 20 and (len(finded_text) - reg_search.end()) > 20:
+                    #     finded_text = finded_text[:reg_search.end()+20]
+                    # elif reg_search.start() > 20 and (len(finded_text) - reg_search.end()) < 20:
+                    #     finded_text = finded_text[reg_search.start()-20:]
+                    # elif reg_search.start() > 20 and (len(finded_text) - reg_search.end()) > 20:
+                    #     finded_text = finded_text[reg_search.start()-20:reg_search.end()+20]
                     result["data"].append({"dialog_id": str(document['dialog_id']), "text": str(d_dict['utterances'][0]['text']), "date": str(document['date_start']), "find_text": finded_text, "index": num, "msg_date": str(i["date_time"])})
+                if "table" in i["attributes"].keys():
+                    if re.search(find_text, i["attributes"]["table"], flags=re.I):
+                        finded_table_text = re.sub(r"<.*?>", "", i["text"])
+                        finded_table_text = re.sub(find_text, f"<u>{find_text}</u>", finded_table_text, flags=re.I)
+                        finded_table_text = re.sub(r"\s+", " ", finded_table_text)
+                        result["data"].append({"dialog_id": str(document['dialog_id']), "text": str(d_dict['utterances'][0]['text']), "date": str(document['date_start']), "find_text": finded_table_text, "index": num, "msg_date": str(i["date_time"])})
         return result
 
     @classmethod
