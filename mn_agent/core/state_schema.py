@@ -390,7 +390,7 @@ class Dialog:
                     result["data"].append({"dialog_id": str(document['dialog_id']), "text": str(d_dict['utterances'][0]['text']), "date": str(document['date_start']), "find_text": finded_text, "index": num, "msg_date": str(i["date_time"])})
                 if "table" in i["attributes"].keys():
                     if re.search(find_text, i["attributes"]["table"], flags=re.I):
-                        finded_table_text = re.sub(r"<.*?>", "", i["text"])
+                        finded_table_text = re.sub(r"<.*?>", "", i["attributes"]["table"])
                         finded_table_text = re.sub(find_text, f"<u>{find_text}</u>", finded_table_text, flags=re.I)
                         finded_table_text = re.sub(r"\s+", " ", finded_table_text)
                         result["data"].append({"dialog_id": str(document['dialog_id']), "text": str(d_dict['utterances'][0]['text']), "date": str(document['date_start']), "find_text": finded_table_text, "index": num, "msg_date": str(i["date_time"])})
