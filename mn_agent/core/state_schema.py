@@ -393,6 +393,13 @@ class Dialog:
                         finded_table_text = re.sub(r"<.*?>", "", i["attributes"]["table"])
                         finded_table_text = re.sub(find_text, f"<u>{find_text}</u>", finded_table_text, flags=re.I)
                         finded_table_text = re.sub(r"\s+", " ", finded_table_text)
+                        reg_search = re.search(find_text, finded_table_text, flags=re.I)
+                        if reg_search.start() < 100 and (len(finded_table_text) - reg_search.end()) > 100:
+                            finded_table_text = finded_table_text[:reg_search.end()+100]
+                        elif reg_search.start() > 100 and (len(finded_table_text) - reg_search.end()) < 100:
+                            finded_table_text = finded_table_text[reg_search.start()-100:]
+                        elif reg_search.start() > 100 and (len(finded_table_text) - reg_search.end()) > 100:
+                            finded_table_text = finded_table_text[reg_search.start()-100:reg_search.end()+100]
                         result["data"].append({"dialog_id": str(document['dialog_id']), "text": str(d_dict['utterances'][0]['text']), "date": str(document['date_start']), "find_text": finded_table_text, "index": num, "msg_date": str(i["date_time"])})
         return result
 
